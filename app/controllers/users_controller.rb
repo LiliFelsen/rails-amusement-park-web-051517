@@ -1,6 +1,5 @@
 class UsersController < ApplicationController
-  def homepage
-  end
+  before_action :authenticated, except: [:new, :create]
 
   def show
     @user = User.find(params[:id])
@@ -16,18 +15,25 @@ class UsersController < ApplicationController
       session[:user_id] = @user.id
       redirect_to user_path(@user)
     else
-      render :new
+      render 'new'
     end
   end
 
   def edit
+    @user = User.find(params[:id])
   end
 
   def update
+    @user = User.find(params[:id])
+    @user.update(user_params)
+    if @user.save
+      session[:user_id] = @user.id
+      redirect_to user_path(@user)
+    else
+      render 'new'
+    end
   end
 
-  def destroy
-  end
 
   private
 
